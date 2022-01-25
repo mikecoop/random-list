@@ -33,6 +33,9 @@ let randomizeMutable (values : 'a list) : 'a list =
             randomize' original randomized
     randomize' (new List<'a>(values)) (new List<'a>()) |> List.ofSeq
 
+/// Randomizes the given list.
+let randomizeStackOverflow values =
+    values |> List.sortBy rand.Next
 
 /// Generates a list of random values from 1 to a given value.
 let generateLength n = randomize [ 1 .. n ]
@@ -40,8 +43,5 @@ let generateLength n = randomize [ 1 .. n ]
 /// Generates a list of random values from 1 to a given value.
 let generateLengthMutable n = randomizeMutable [ 1 .. n ]
 
-/// Generates a list of random values from 1 to 10,000.
-let generate() = randomize [ 1 .. 10_000 ]
-
-/// Generates a list of random values from 1 to 10,000.
-let generateMutable() = randomizeMutable [ 1 .. 10_000 ]
+/// Generates a list of random values from 1 to a given value.
+let generateStackOverflow n = randomizeStackOverflow [ 1 .. n ]

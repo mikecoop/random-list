@@ -14,3 +14,6 @@ type RandomListComparison () =
 
     [<Benchmark>]
     member self.GenerateLengthMutable() = generateLengthMutable self.ListSize
+
+    [<Benchmark>]
+    member self.GenerateLengthStackOverflow() = generateStackOverflow self.ListSize

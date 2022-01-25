@@ -5,11 +5,11 @@
 The challenge was to write a program that generates a list of distinct random numbers from 1 to 10,000 inclusive each time it is run.
 
 ### Projects
-| **Name**                 | **Description**                                   |
-|--------------------------|---------------------------------------------------|
-| RandomNumbers            | The main executable.                              |
-| RandomNumbers.Benchmarks | Contains benchmarks for two different approaches. |
-| RandomNumbers.Tests      | Contains unit tests.                              |
+| **Name**                 | **Description**                                           |
+|--------------------------|-----------------------------------------------------------|
+| RandomNumbers            | The main executable containing the random list functions. |
+| RandomNumbers.Benchmarks | Contains benchmarks for two different approaches.         |
+| RandomNumbers.Tests      | Contains unit tests.                                      |
 
 ### Methodology
 
@@ -18,6 +18,8 @@ The first approach was to solve the problem in a purely functional manner. The s
 One problem with the first approach is that since lists are immutable we would have to allocate at least 20,000 objects when adding and removing items from each list. I created a second version of the function that uses the regular mutable .NET List object for comparison.
 
 To compare the two, I made a separate project using BenchmarkDotNet that runs each approach with different input list sizes.
+
+Out of curiosity, I found a third very clever approach on StackOverflow and added that as a point of comparison.
 
 ### Benchmarks
 
@@ -28,14 +30,17 @@ Intel Core i9-10885H CPU 2.40GHz, 1 CPU, 16 logical and 8 physical cores<br>
   DefaultJob : .NET 6.0.1 (6.0.121.56705), X64 RyuJIT<br>
 
 
-| Method                | ListSize |           Mean |         Error |         StdDev |      Gen 0 |      Gen 1 |  Allocated |
-|-----------------------|----------|---------------:|--------------:|---------------:|-----------:|-----------:|-----------:|
-| GenerateLength        | 100      |      36.127 us |     0.6608 us |      0.6181 us |    10.2234 |     0.2441 |      84 KB |
-| GenerateLengthMutable | 100      |       7.026 us |     0.0267 us |      0.0250 us |     1.0605 |     0.0229 |       9 KB |
-| GenerateLength        | 1000     |   3,254.094 us |    18.9854 us |     16.8301 us |   960.9375 |   164.0625 |   7,868 KB |
-| GenerateLengthMutable | 1000     |      76.108 us |     0.3363 us |      0.3146 us |     9.6436 |     1.5869 |      79 KB |
-| GenerateLength        | 10000    | 357,758.071 us | 7,027.1578 us | 13,870.9240 us | 96000.0000 | 28000.0000 | 786,783 KB |
-| GenerateLengthMutable | 10000    |   1,801.670 us |     7.1058 us |      6.6468 us |   107.4219 |    48.8281 |     882 KB |
+| Method                      | ListSize |           Mean |         Error |         StdDev |      Gen 0 |      Gen 1 |  Allocated |
+|-----------------------------|----------|---------------:|--------------:|---------------:|-----------:|-----------:|-----------:|
+| GenerateLength              | 100      |      35.226 us |     0.4072 us |      0.3809 us |    10.2234 |     0.2441 |      84 KB |
+| GenerateLengthMutable       | 100      |       6.955 us |     0.0388 us |      0.0363 us |     1.0605 |     0.0229 |       9 KB |
+| GenerateLengthStackOverflow | 100      |       6.579 us |     0.0190 us |      0.0158 us |     0.9766 |     0.0229 |       8 KB |
+| GenerateLength              | 1000     |   3,225.210 us |    19.5544 us |     18.2912 us |   960.9375 |   164.0625 |   7,862 KB |
+| GenerateLengthMutable       | 1000     |      74.721 us |     0.2990 us |      0.2796 us |     9.6436 |     1.5869 |      79 KB |
+| GenerateLengthStackOverflow | 1000     |      76.178 us |     0.1879 us |      0.1758 us |     9.5215 |     1.5869 |      78 KB |
+| GenerateLength              | 10000    | 360,630.723 us | 7,193.5479 us | 13,511.2266 us | 94000.0000 | 26000.0000 | 771,963 KB |
+| GenerateLengthMutable       | 10000    |   1,802.088 us |    12.4509 us |      9.7208 us |   107.4219 |    48.8281 |     882 KB |
+| GenerateLengthStackOverflow | 10000    |     888.326 us |     1.7238 us |      1.5281 us |    94.7266 |    44.9219 |     781 KB |
 
 ### Conclusion
 As the benchmarks show, the mutable approach is both significantly faster, uses far less memory, and causes significantly less Gen 0 and Gen 1 garbage collections.
